@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<title>Arbeitszeiten</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Arbeitszeiten">
+<meta name="application-name" content="Arbeitszeiten">
+<meta name="theme-color" content="#3b82f6">
+<link rel="apple-touch-icon" id="ati" href="">
+<style>
+:root{--bg:#f0f4f8;--sf:#fff;--sf2:#f7f8fa;--bd:#e2e8f0;--tx:#1a202c;--tx2:#64748b;--ac:#3b82f6;--ac2:#2563eb;--ok:#10b981;--wn:#f59e0b;--er:#ef4444;--r:12px;--rs:8px}
+[data-theme=dark]{--bg:#0f172a;--sf:#1e293b;--sf2:#263248;--bd:#334155;--tx:#e2e8f0;--tx2:#94a3b8;--ac:#60a5fa;--ac2:#3b82f6;--ok:#34d399;--wn:#fbbf24;--er:#f87171}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;transition:background .3s,color .3s;font-size:14px;line-height:1.5}
+#setup{display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px 16px}
+.sbox{width:100%;max-width:440px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:32px 28px}
+.slogo{font-size:22px;font-weight:800;color:var(--ac);margin-bottom:4px}
+.ssub{color:var(--tx2);font-size:12px;margin-bottom:18px}
+.prog{display:flex;gap:5px;margin-bottom:20px}
+.pd{height:4px;flex:1;border-radius:2px;background:var(--bd);transition:background .25s}
+.pd.act{background:var(--ac)}.pd.dn{background:var(--ok)}
+.step{display:none}.step.show{display:block}
+.slabel{font-size:15px;font-weight:700;margin-bottom:3px}
+.shint{font-size:12px;color:var(--tx2);margin-bottom:13px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+input[type=number],input[type=date],input[type=time],input[type=text],select{width:100%;padding:9px 11px;background:var(--sf2);border:1.5px solid var(--bd);border-radius:var(--rs);color:var(--tx);font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{border-color:var(--ac)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:none;border-radius:var(--rs);padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all .18s}
+.bp{background:var(--ac);color:#fff}.bp:hover{background:var(--ac2)}
+.bs{background:var(--sf2);color:var(--tx);border:1.5px solid var(--bd)}.bs:hover{background:var(--bd)}
+.bg{background:var(--ok);color:#fff}.bg:hover{filter:brightness(.9)}
+.be{background:transparent;color:var(--er);border:1.5px solid var(--er)}.be:hover{background:var(--er);color:#fff}
+.bgh{background:none;border:none;color:var(--tx2);padding:6px 8px;cursor:pointer;border-radius:var(--rs);font-size:16px}.bgh:hover{background:var(--sf2);color:var(--tx)}
+.bfull{width:100%}.bsm{padding:6px 11px;font-size:12px}
+.brow{display:flex;gap:8px;margin-top:16px}
+#app{display:none;min-height:100vh}
+.ahdr{background:var(--sf);border-bottom:1px solid var(--bd);height:50px;display:flex;align-items:center;padding:0 14px;position:sticky;top:0;z-index:50}
+.alogo{font-size:15px;font-weight:800;color:var(--ac);flex:1}
+.anav{background:var(--sf);border-bottom:1px solid var(--bd);display:flex;overflow-x:auto;padding:0 6px}
+.anav::-webkit-scrollbar{display:none}
+.ni{padding:0 12px;height:40px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--tx2);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s}
+.ni:hover{color:var(--tx)}.ni.on{color:var(--ac);border-bottom-color:var(--ac)}
+.inst-ban{background:var(--ac);color:#fff;padding:9px 13px;display:flex;align-items:center;gap:10px;font-size:12px;flex-wrap:wrap}
+.sb{background:var(--sf);border-bottom:1px solid var(--bd);padding:7px 12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.si{display:flex;align-items:center;gap:4px;font-size:12px}
+.sil{color:var(--tx2)}.siv{font-weight:700}
+.plus{color:var(--ok)}.minus{color:var(--er)}.zero{color:var(--tx)}
+.cnt{max-width:720px;margin:0 auto;padding:12px 12px 40px}
+.view{display:none}.view.on{display:block}
+.nr{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px}
+.nd{font-size:14px;font-weight:700;text-align:center;min-width:190px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:13px;margin-bottom:10px}
+.ched{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.ctitle{font-size:14px;font-weight:700}
+.egrid{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;align-items:end;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:9px;margin-bottom:7px}
+.ef label{font-size:10px;font-weight:700;color:var(--tx2);margin-bottom:3px;display:block;text-transform:uppercase;letter-spacing:.03em}
+.ef input{font-size:13px;padding:7px 8px}
+.edel{background:none;border:1.5px solid var(--er);color:var(--er);border-radius:6px;padding:6px 8px;cursor:pointer;font-size:13px;align-self:end;transition:all .15s}
+.edel:hover{background:var(--er);color:#fff}
+.togs{display:flex;gap:8px;margin-top:10px}
+.tog{padding:5px 13px;border-radius:99px;border:1.5px solid var(--bd);background:var(--sf2);color:var(--tx2);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s}
+.tog.tv{background:#dbeafe;border-color:var(--ac);color:var(--ac2)}
+[data-theme=dark] .tog.tv{background:rgba(96,165,250,.15)}
+.tog.tk{background:#fef3c7;border-color:var(--wn);color:#d97706}
+[data-theme=dark] .tog.tk{background:rgba(251,191,36,.15)}
+.s3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:11px}
+.s2{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.sbox{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 7px;text-align:center}
+.sbox .slb{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:2px}
+.sbox .svl{font-size:15px;font-weight:800}
+.wdc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:5px;overflow:hidden}
+.wdh{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;cursor:pointer;background:var(--sf);transition:background .15s}
+.wdh:hover{background:var(--sf2)}.wdh.tday{background:rgba(59,130,246,.06)}
+[data-theme=dark] .wdh.tday{background:rgba(96,165,250,.08)}
+.wdn{font-weight:700;font-size:13px}.wdd{font-size:11px;color:var(--tx2);margin-top:1px}
+.wdr{display:flex;align-items:center;gap:10px}
+.wst{text-align:right}.wsl{font-size:10px;color:var(--tx2);text-transform:uppercase;letter-spacing:.04em}
+.wsv{font-size:12px;font-weight:700}
+.wdb{padding:9px 11px;border-top:1px solid var(--bd);font-size:12px}.wdb.cls{display:none}
+.wtr{display:flex;align-items:center;justify-content:space-between;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 12px;margin-top:4px}
+.wtl{font-size:13px;font-weight:700}.wts{display:flex;gap:14px}
+.bdg{display:inline-block;padding:1px 7px;border-radius:99px;font-size:10px;font-weight:700;margin-left:4px}
+.bv{background:#dbeafe;color:#2563eb}[data-theme=dark] .bv{background:rgba(96,165,250,.2);color:var(--ac)}
+.bk{background:#fef3c7;color:#d97706}[data-theme=dark] .bk{background:rgba(251,191,36,.15);color:var(--wn)}
+.bf{background:#f0fdf4;color:#16a34a}[data-theme=dark] .bf{background:rgba(52,211,153,.15);color:var(--ok)}
+.bfr{background:var(--sf2);color:var(--tx2)}
+.salbox{text-align:center;padding:12px 0}
+.salam{font-size:24px;font-weight:800;color:var(--ac)}
+.salh{font-size:11px;color:var(--tx2);margin-top:2px}
+.mdr{display:flex;align-items:center;padding:6px 3px;border-bottom:1px solid var(--bd);font-size:12px;cursor:pointer;border-radius:4px}
+.mdr:last-child{border-bottom:none}.mdr:hover{background:var(--sf2)}
+.mdo{width:24px;color:var(--tx2);font-weight:600}.mdt{width:48px}
+.mdi{width:24px;font-size:10px;font-weight:700}
+.mdf{flex:1}.mdv{width:48px;text-align:right;font-weight:700}
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;padding:16px}
+.ov.open{display:flex}
+.mb{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:22px;width:100%;max-width:360px}
+.mt{font-size:15px;font-weight:800;margin-bottom:5px}.ms{font-size:12px;color:var(--tx2);margin-bottom:14px}
+.ma{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}
+.div{height:1px;background:var(--bd);margin:10px 0}
+.csec{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--tx2);margin:14px 0 8px}
+.eh{text-align:center;color:var(--tx2);font-size:13px;padding:10px 0}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup">
+<div class="sbox">
+  <div class="slogo">Arbeitszeiten</div>
+  <div class="ssub">Ersteinrichtung – nur einmalig nötig</div>
+  <div class="prog" id="prog"></div>
+  <div id="step0" class="step show">
+    <div class="slabel">Wochenstunden</div><div class="shint">Wie viele Stunden arbeitest du pro Woche?</div>
+    <div class="field"><label>Wochenstunden</label><input type="number" id="s-wh" value="40" min="1" max="80" step="0.5"></div>
+    <div class="brow"><button class="btn bp bfull" onclick="nxS()">Weiter →</button></div>
+  </div>
+  <div id="step1" class="step">
+    <div class="slabel">Arbeitstage</div><div class="shint">Wie viele Tage pro Woche arbeitest du?</div>
+    <div class="field"><label>Tage pro Woche (1–7)</label><input type="number" id="s-tw" value="5" min="1" max="7"></div>
+    <div class="brow"><button class="btn bs" onclick="pvS()">← Zurück</button><button class="btn bp" style="flex:1" onclick="nxS()">Weiter →</button></div>
+  </div>
+  <div id="step2" class="step">
+    <div class="slabel">Aufzeichnungsbeginn</div><div class="shint">Ab welchem Datum soll die Erfassung starten?</div>
+    <div class="field"><label>Startdatum</label><input type="date" id="s-sd"></div>
+    <div class="brow"><button class="btn bs" onclick="pvS()">← Zurück</button><button class="btn bp" style="flex:1" onclick="nxS()">Weiter →</button></div>
+  </div>
+  <div id="step3" class="step">
+    <div class="slabel">Bruttostundenlohn</div><div class="shint">Wie hoch ist dein Bruttostundenlohn in €?</div>
+    <div class="field"><label>Bruttostundenlohn (€)</label><input type="number" id="s-bl" value="15.00" min="0" step="0.01"></div>
+    <div class="brow"><button class="btn bs" onclick="pvS()">← Zurück</button><button class="btn bp" style="flex:1" onclick="nxS()">Weiter →</button></div>
+  </div>
+  <div id="step4" class="step">
+    <div class="slabel">Urlaubstage</div><div class="shint">Wie viele Urlaubstage stehen dir dieses Jahr insgesamt zur Verfügung?</div>
+    <div class="field"><label>Urlaubstage (gesamt)</label><input type="number" id="s-ur" value="30" min="0" max="365"></div>
+    <div class="brow"><button class="btn bs" onclick="pvS()">← Zurück</button><button class="btn bp" style="flex:1" onclick="nxS()">Weiter →</button></div>
+  </div>
+  <div id="step5" class="step">
+    <div class="slabel">Bundesland</div><div class="shint">Für die automatische Erkennung von Feiertagen.</div>
+    <div class="field"><label>Bundesland</label><select id="s-bld"></select></div>
+    <div class="brow"><button class="btn bs" onclick="pvS()">← Zurück</button><button class="btn bg" style="flex:1" onclick="finS()">Fertig</button></div>
+  </div>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header class="ahdr">
+    <div class="alogo">Arbeitszeiten</div>
+    <button id="tbtn" class="bgh" onclick="togThm()">🌙</button>
+  </header>
+  <nav class="anav">
+    <button class="ni" data-v="day" onclick="swV('day')">Tag</button>
+    <button class="ni on" data-v="week" onclick="swV('week')">Woche</button>
+    <button class="ni" data-v="month" onclick="swV('month')">Monat</button>
+    <button class="ni" data-v="cfg" onclick="swV('cfg')">Konfiguration</button>
+  </nav>
+
+  <!-- Install Banner -->
+  <div id="inst-ban" style="display:none" class="inst-ban">
+    <span id="inst-txt" style="flex:1;line-height:1.5"></span>
+    <button id="inst-btn" onclick="doInstall()" style="display:none;background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.5);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer">Installieren</button>
+    <button onclick="dimissBan()" style="background:none;border:none;color:rgba(255,255,255,.75);font-size:20px;line-height:1;cursor:pointer;padding:0 2px">&times;</button>
+  </div>
+
+  <div class="sb">
+    <div class="si"><span class="sil">Urlaub übrig:</span><span class="siv zero" id="sb-v">–</span></div>
+    <div class="si"><span class="sil">Gesamtüberstunden:</span><span class="siv zero" id="sb-ot">–</span></div>
+    <button id="po-btn" class="btn bs bsm" onclick="opnPay()">Überstunden auszahlen</button>
+  </div>
+  <div class="cnt">
+
+    <!-- TAG -->
+    <div id="v-day" class="view">
+      <div class="nr">
+        <button class="bgh" onclick="navDay(-1)">◀</button>
+        <div class="nd" id="day-disp">–</div>
+        <button class="bgh" onclick="navDay(1)">▶</button>
+      </div>
+      <div class="card">
+        <div class="ched"><div class="ctitle">Zeiteinträge</div><div id="day-bdg"></div></div>
+        <div id="day-ent"></div>
+        <button id="add-btn" class="btn bs bsm" onclick="addEnt()" style="margin-top:5px">+ Eintrag hinzufügen</button>
+        <div class="togs">
+          <button id="tog-v" class="tog" onclick="togDay('v')">Urlaub</button>
+          <button id="tog-k" class="tog" onclick="togDay('k')">Krankheit</button>
+        </div>
+        <div class="div"></div>
+        <div class="s3">
+          <div class="sbox"><div class="slb">SOLL</div><div class="svl zero" id="d-soll">–</div></div>
+          <div class="sbox"><div class="slb">IST</div><div class="svl zero" id="d-ist">–</div></div>
+          <div class="sbox"><div class="slb">Über-/Unterstd.</div><div class="svl zero" id="d-ot">–</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WOCHE -->
+    <div id="v-week" class="view on">
+      <div class="nr">
+        <button class="bgh" onclick="navWk(-1)">◀</button>
+        <div class="nd" id="wk-disp">–</div>
+        <button class="bgh" onclick="navWk(1)">▶</button>
+      </div>
+      <div id="wk-days"></div>
+      <div class="wtr">
+        <div class="wtl">Woche gesamt</div>
+        <div class="wts">
+          <div class="wst"><div class="wsl">SOLL</div><div class="wsv" id="wt-soll">–</div></div>
+          <div class="wst"><div class="wsl">IST</div><div class="wsv" id="wt-ist">–</div></div>
+          <div class="wst"><div class="wsl">Überstunden</div><div class="wsv zero" id="wt-ot">–</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MONAT -->
+    <div id="v-month" class="view">
+      <div class="nr">
+        <button class="bgh" onclick="navMon(-1)">◀</button>
+        <div class="nd" id="mon-disp">–</div>
+        <button class="bgh" onclick="navMon(1)">▶</button>
+      </div>
+      <div class="card">
+        <div class="salbox"><div class="salam" id="m-sal">–</div><div class="salh">Erwarteter Bruttomonatslohn (auf Basis geleisteter Stunden)</div></div>
+        <div class="div"></div>
+        <div class="s2">
+          <div class="sbox"><div class="slb">SOLL Stunden</div><div class="svl zero" id="m-soll">–</div></div>
+          <div class="sbox"><div class="slb">IST Stunden</div><div class="svl zero" id="m-ist">–</div></div>
+          <div class="sbox"><div class="slb">Überstunden</div><div class="svl zero" id="m-ot">–</div></div>
+          <div class="sbox"><div class="slb">Urlaub / Krank / FT</div><div class="svl zero" id="m-vk">–</div></div>
+        </div>
+      </div>
+      <div class="card"><div class="ctitle" style="margin-bottom:9px">Tagesübersicht</div><div id="m-list"></div></div>
+    </div>
+
+    <!-- CONFIG -->
+    <div id="v-cfg" class="view">
+      <div class="card">
+        <div class="ctitle">Konfiguration</div>
+        <p style="font-size:12px;color:var(--tx2);margin-top:3px">Änderungen werden beim Speichern übernommen.</p>
+        <div class="csec">Arbeitszeit</div>
+        <div class="field"><label>Wochenstunden</label><input type="number" id="c-wh" min="1" max="80" step="0.5"></div>
+        <div class="field"><label>Arbeitstage pro Woche (1–7)</label><input type="number" id="c-tw" min="1" max="7"></div>
+        <div class="field"><label>Aufzeichnungsbeginn</label><input type="date" id="c-sd"></div>
+        <div class="csec">Vergütung &amp; Urlaub</div>
+        <div class="field"><label>Bruttostundenlohn (€)</label><input type="number" id="c-bl" min="0" step="0.01"></div>
+        <div class="field"><label>Urlaubstage gesamt (dieses Jahr)</label><input type="number" id="c-ur" min="0" max="365"></div>
+        <div class="csec">Region</div>
+        <div class="field"><label>Bundesland</label><select id="c-bld"></select></div>
+        <button id="sv-cfg" class="btn bp bfull" onclick="savCfg()">Änderungen speichern</button>
+        <div class="div" style="margin-top:18px"></div>
+        <div class="csec">Datenverwaltung</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bs bsm" onclick="expData()">Backup exportieren</button>
+          <button class="btn bs bsm" onclick="document.getElementById('imp-file').click()">Backup hochladen</button>
+          <button class="btn be bsm" onclick="askRst()">Alle Daten löschen</button>
+        </div>
+        <input type="file" id="imp-file" accept=".json" style="display:none" onchange="impData(this)">
+        <div class="div" style="margin-top:18px"></div>
+        <div class="csec">App installieren</div>
+        <div id="inst-cfg-info" style="font-size:12px;color:var(--tx2);line-height:1.6"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div id="ov-pay" class="ov">
+  <div class="mb">
+    <div class="mt">Überstunden auszahlen</div>
+    <div class="ms">Aktuelle Gesamtüberstunden: <strong id="po-cur">–</strong></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><label>Stunden</label><input type="number" id="po-h" value="0" min="0"></div>
+      <div class="field"><label>Minuten (0–59)</label><input type="number" id="po-m" value="0" min="0" max="59"></div>
+    </div>
+    <div class="ma"><button class="btn bs" onclick="clsPay()">Abbrechen</button><button class="btn bp" onclick="cnfPay()">Auszahlen</button></div>
+  </div>
+</div>
+<div id="ov-rst" class="ov">
+  <div class="mb">
+    <div class="mt">Alle Daten löschen?</div>
+    <div class="ms">Diese Aktion ist unwiderruflich. Alle Einträge, Überstunden und Einstellungen werden dauerhaft gelöscht.</div>
+    <div class="ma"><button class="btn bs" onclick="clsRst()">Abbrechen</button><button class="btn be" onclick="doRst()">Ja, löschen</button></div>
+  </div>
+</div>
+
+<script>
+// ── PWA ────────────────────────────────────────────────────
+(function(){
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="90" fill="%233b82f6"/><circle cx="256" cy="256" r="168" fill="none" stroke="white" stroke-width="32"/><line x1="256" y1="256" x2="256" y2="136" stroke="white" stroke-width="30" stroke-linecap="round"/><line x1="256" y1="256" x2="336" y2="296" stroke="white" stroke-width="22" stroke-linecap="round"/><circle cx="256" cy="256" r="16" fill="white"/></svg>`;
+  const icon='data:image/svg+xml,'+svg;
+  document.getElementById('ati').href=icon;
+  const mf={name:'Arbeitszeiten',short_name:'Arbeitszeiten',description:'Arbeitszeiterfassung',start_url:'./',scope:'./',display:'standalone',orientation:'portrait-primary',theme_color:'#3b82f6',background_color:'#f0f4f8',icons:[{src:icon,sizes:'192x192',type:'image/svg+xml',purpose:'any maskable'},{src:icon,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}]};
+  const ml=document.createElement('link');ml.rel='manifest';ml.href=URL.createObjectURL(new Blob([JSON.stringify(mf)],{type:'application/manifest+json'}));document.head.appendChild(ml);
+  if('serviceWorker' in navigator){
+    const sw=`self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>e.respondWith(fetch(e.request).catch(()=>new Response(''))));`;
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'text/javascript'}))).catch(()=>{});
+  }
+})();
+
+let dPrm=null;
+const isSA=window.matchMedia('(display-mode:standalone)').matches||!!navigator.standalone;
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+const isAnd=/Android/.test(navigator.userAgent);
+
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dPrm=e;showBan();});
+window.addEventListener('appinstalled',()=>{hideBan();localStorage.setItem('az_installed','1');});
+
+function showBan(){
+  if(isSA||localStorage.getItem('az_ban'))return;
+  const b=document.getElementById('inst-ban'),t=document.getElementById('inst-txt'),btn=document.getElementById('inst-btn');
+  if(!b)return;
+  if(dPrm){
+    t.textContent='Diese App kann auf dem Homescreen installiert werden.';
+    btn.style.display='inline-block';
+  }else if(isIOS){
+    t.innerHTML='Installieren: Safari &rarr; Teilen &rarr; "Zum Home-Bildschirm"';
+  }else if(isAnd){
+    t.innerHTML='Installieren: Chrome-Menü (&#8942;) &rarr; "Zum Startbildschirm&nbsp;hinzufügen"';
+  }else return;
+  b.style.display='flex';
+}
+function doInstall(){if(!dPrm)return;dPrm.prompt();dPrm.userChoice.then(r=>{if(r.outcome==='accepted')hideBan();dPrm=null;});}
+function dimissBan(){localStorage.setItem('az_ban','1');hideBan();}
+function hideBan(){const b=document.getElementById('inst-ban');if(b)b.style.display='none';}
+
+function updInstCfg(){
+  const el=document.getElementById('inst-cfg-info');if(!el)return;
+  if(isSA){el.innerHTML='<span style="color:var(--ok);font-weight:600">App ist installiert.</span>';return;}
+  if(isIOS){el.innerHTML='<b>iPhone/iPad:</b> In Safari öffnen → Teilen-Symbol → "Zum Home-Bildschirm" antippen.';}
+  else if(isAnd){el.innerHTML='<b>Android:</b> In Chrome öffnen → Menü (drei Punkte oben rechts) → "Zum Startbildschirm hinzufügen".<br><br><b>Hinweis:</b> Für den automatischen Installations-Dialog muss die HTML-Datei per HTTPS gehostet sein (z.&nbsp;B. GitHub Pages, Netlify).';}
+  else{el.innerHTML='Die App kann auf Android und iOS als Homescreen-App installiert werden. Dazu die Datei per HTTPS hosten (z.&nbsp;B. GitHub Pages).';}
+}
+
+// ── STATE ──────────────────────────────────────────────────
+const S={cfg:null,days:{},payouts:[],theme:'light'};
+let vCur='week',vDay,vWS,vMon,sStep=0;
+const hCache={};
+const LS='az_v4';
+function save(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+function load(){try{const r=localStorage.getItem(LS);if(r){Object.assign(S,JSON.parse(r));return true;}}catch(e){}return false;}
+
+function tStr(){const d=new Date();return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;}
+function p2(n){return String(n).padStart(2,'0');}
+function toM(s){if(!s)return 0;if(!s.includes(':'))return parseInt(s)||0;const[h,m]=s.split(':');return(parseInt(h)||0)*60+(parseInt(m)||0);}
+function fmM(n){const sg=n<0?'-':'',a=Math.abs(n);return `${sg}${p2(Math.floor(a/60))}:${p2(a%60)}`;}
+function monDay(d){const dt=new Date(d);dt.setHours(0,0,0,0);const dw=dt.getDay();dt.setDate(dt.getDate()-(dw===0?6:dw-1));return dt;}
+function addD(d,n){const dt=new Date(d);dt.setDate(dt.getDate()+n);return dt;}
+function dStr(d){return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;}
+function dObj(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function fDE(s){const d=dObj(s);return `${p2(d.getDate())}.${p2(d.getMonth()+1)}.${d.getFullYear()}`;}
+function kw(d){const dt=new Date(d);dt.setHours(12,0,0,0);dt.setDate(dt.getDate()+4-(dt.getDay()||7));const y1=new Date(dt.getFullYear(),0,1);return Math.ceil(((dt-y1)/86400000+1)/7);}
+const DOW_DE=['So','Mo','Di','Mi','Do','Fr','Sa'];
+const DOW_LNG=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const MON_DE=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const BL=[['BW','Baden-Württemberg'],['BY','Bayern'],['BE','Berlin'],['BB','Brandenburg'],['HB','Bremen'],['HH','Hamburg'],['HE','Hessen'],['MV','Mecklenburg-Vorpommern'],['NI','Niedersachsen'],['NW','Nordrhein-Westfalen'],['RP','Rheinland-Pfalz'],['SL','Saarland'],['SN','Sachsen'],['ST','Sachsen-Anhalt'],['SH','Schleswig-Holstein'],['TH','Thüringen']];
+function blHTML(sel){return BL.map(([v,n])=>`<option value="${v}"${v===sel?' selected':''}>${n}</option>`).join('');}
+function otCls(n){return n>0?'plus':n<0?'minus':'zero';}
+
+function isWD(s){const dw=dObj(s).getDay(),t=S.cfg.xTageswoche;if(dw===0)return t>=7;return t>=dw;}
+function daySoll(){return(S.cfg.xWochenstunden/S.cfg.xTageswoche)*60;}
+function getDay(s){return S.days[s]||{entries:[],urlaub:false,krank:false};}
+
+function getEaster(yr){const a=yr%19,b=Math.floor(yr/100),c=yr%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),dy=(h+l-7*m+114)%31+1;return new Date(yr,mo-1,dy);}
+function getBBT(yr){const d=new Date(yr,10,23),dw=d.getDay();d.setDate(d.getDate()-(dw-3+7)%7);return d;}
+function calcHols(yr){
+  const h={};
+  const add=(dt,name)=>{if(!dt)return;h[`${dt.getFullYear()}-${p2(dt.getMonth()+1)}-${p2(dt.getDate())}`]=name;};
+  const ea=getEaster(yr),e=(n,name)=>add(addD(ea,n),name);
+  add(new Date(yr,0,1),'Neujahr');add(new Date(yr,4,1),'Tag der Arbeit');add(new Date(yr,9,3),'Tag der Deutschen Einheit');add(new Date(yr,11,25),'1. Weihnachtstag');add(new Date(yr,11,26),'2. Weihnachtstag');
+  e(-2,'Karfreitag');e(1,'Ostermontag');e(39,'Christi Himmelfahrt');e(50,'Pfingstmontag');
+  const bl=S.cfg.bundesland;
+  if(['BW','BY','ST'].includes(bl))add(new Date(yr,0,6),'Heilige Drei Könige');
+  if(['BE','MV'].includes(bl))add(new Date(yr,2,8),'Internationaler Frauentag');
+  if(bl==='BB'){e(0,'Ostersonntag');e(49,'Pfingstsonntag');}
+  if(['BW','BY','HE','NW','RP','SL'].includes(bl))e(60,'Fronleichnam');
+  if(['BY','SL'].includes(bl))add(new Date(yr,7,15),'Mariä Himmelfahrt');
+  if(bl==='TH')add(new Date(yr,8,20),'Weltkindertag');
+  if(['BB','HB','HH','MV','NI','SN','ST','SH','TH'].includes(bl))add(new Date(yr,9,31),'Reformationstag');
+  if(['BW','BY','NW','RP','SL'].includes(bl))add(new Date(yr,10,1),'Allerheiligen');
+  if(bl==='SN')add(getBBT(yr),'Buß- und Bettag');
+  return h;
+}
+function getHols(yr){const k=`${yr}-${S.cfg.bundesland}`;if(!hCache[k])hCache[k]=calcHols(yr);return hCache[k];}
+function isHol(s){return getHols(parseInt(s))[s]||null;}
+
+function dayIst(s){const d=getDay(s);if(isWD(s)&&(d.urlaub||d.krank||isHol(s)))return daySoll();return d.entries.reduce((t,e)=>{if(!e.start||!e.end)return t;let st=toM(e.start),en=toM(e.end);if(en<=st)en+=1440;return t+Math.max(0,en-st-toM(e.pause||'0'));},0);}
+function dayOT(s){const ist=dayIst(s);if(!isWD(s))return ist;return ist-daySoll();}
+function rawOT(){const today=tStr(),start=S.cfg.startDate;let t=0;for(const[s,d]of Object.entries(S.days)){if(s>=start&&s<=today&&(d.entries.length||d.urlaub||d.krank))t+=dayOT(s);}return t;}
+function totPay(){return S.payouts.reduce((a,p)=>a+p.mins,0);}
+function netOT(){return rawOT()-totPay();}
+function usedVac(){const y=String(new Date().getFullYear());let c=0;for(const[s,d]of Object.entries(S.days))if(d.urlaub&&s.startsWith(y)&&isWD(s)&&!isHol(s))c++;return c;}
+function remVac(){return S.cfg.xUrlaub-usedVac();}
+
+function updProg(n){document.querySelectorAll('.pd').forEach((el,i)=>{el.className='pd'+(i===n?' act':i<n?' dn':'');});}
+function nxS(){
+  if(sStep===0&&!(parseFloat(document.getElementById('s-wh').value)>0))return alert('Bitte eine gültige Stundenzahl eingeben.');
+  if(sStep===1){const v=parseInt(document.getElementById('s-tw').value);if(!v||v<1||v>7)return alert('Bitte 1–7 Tage eingeben.');}
+  if(sStep===2&&!document.getElementById('s-sd').value)return alert('Bitte ein Datum eingeben.');
+  document.getElementById(`step${sStep}`).classList.remove('show');sStep++;
+  document.getElementById(`step${sStep}`).classList.add('show');updProg(sStep);
+}
+function pvS(){document.getElementById(`step${sStep}`).classList.remove('show');sStep--;document.getElementById(`step${sStep}`).classList.add('show');updProg(sStep);}
+function finS(){
+  S.cfg={xWochenstunden:parseFloat(document.getElementById('s-wh').value),xTageswoche:parseInt(document.getElementById('s-tw').value),startDate:document.getElementById('s-sd').value,xBruttohlohn:parseFloat(document.getElementById('s-bl').value),xUrlaub:parseInt(document.getElementById('s-ur').value),bundesland:document.getElementById('s-bld').value};
+  save();initApp();
+}
+
+function initApp(){
+  document.getElementById('setup').style.display='none';document.getElementById('app').style.display='block';
+  document.documentElement.setAttribute('data-theme',S.theme);
+  document.getElementById('tbtn').textContent=S.theme==='dark'?'☀️':'🌙';
+  vDay=tStr();vWS=monDay(new Date());vMon={y:new Date().getFullYear(),m:new Date().getMonth()};
+  updSB();swV('week');
+  if(!isSA)showBan();
+}
+function updSB(){const rv=remVac(),ot=netOT();document.getElementById('sb-v').textContent=`${rv} Tage`;document.getElementById('sb-v').className='siv '+otCls(rv);document.getElementById('sb-ot').textContent=fmM(ot);document.getElementById('sb-ot').className='siv '+otCls(ot);const pb=document.getElementById('po-btn');pb.disabled=ot<=0;pb.style.opacity=ot<=0?'0.5':'1';}
+function togThm(){S.theme=S.theme==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',S.theme);document.getElementById('tbtn').textContent=S.theme==='dark'?'☀️':'🌙';save();}
+function swV(v){vCur=v;document.querySelectorAll('.view').forEach(el=>el.classList.remove('on'));document.querySelectorAll('.ni').forEach(el=>el.classList.remove('on'));document.getElementById(`v-${v}`).classList.add('on');document.querySelector(`[data-v="${v}"]`).classList.add('on');if(v==='day')rDay();else if(v==='week')rWeek();else if(v==='month')rMon();else if(v==='cfg'){rCfg();updInstCfg();}}
+
+function navDay(d){vDay=dStr(addD(dObj(vDay),d));rDay();}
+function rDay(){
+  const day=getDay(vDay),dt=dObj(vDay),isT=vDay===tStr(),hol=isHol(vDay),wd=isWD(vDay);
+  document.getElementById('day-disp').textContent=`${DOW_LNG[dt.getDay()]}, ${fDE(vDay)}${isT?' · Heute':''}`;
+  let bdg='';
+  if(hol)bdg+=`<span class="bdg bf">Feiertag</span>`;
+  if(day.urlaub)bdg+=`<span class="bdg bv">Urlaub</span>`;
+  if(day.krank)bdg+=`<span class="bdg bk">Krank</span>`;
+  if(!wd&&!hol)bdg+=`<span class="bdg bfr">Frei</span>`;
+  document.getElementById('day-bdg').innerHTML=bdg;
+  document.getElementById('tog-v').className='tog'+(day.urlaub?' tv':'');
+  document.getElementById('tog-k').className='tog'+(day.krank?' tk':'');
+  const blocked=day.urlaub||day.krank||!!hol;
+  document.getElementById('add-btn').style.display=blocked?'none':'inline-flex';
+  document.querySelector('.togs').style.display=hol?'none':'flex';
+  rEntries(day,blocked,hol);
+  const soll=wd?daySoll():0,ist=dayIst(vDay),ot=dayOT(vDay);
+  document.getElementById('d-soll').textContent=fmM(soll);document.getElementById('d-ist').textContent=fmM(ist);
+  const el=document.getElementById('d-ot');el.textContent=fmM(ot);el.className='svl '+otCls(ot);
+  updSB();
+}
+function rEntries(day,blocked,hol){
+  const c=document.getElementById('day-ent');c.innerHTML='';
+  if(blocked){const d2=getDay(vDay),h2=isHol(vDay);c.innerHTML=`<p class="eh">${h2?'Feiertag: '+h2+' – Tages-IST = Tages-SOLL':d2.urlaub?'Urlaubstag – Tages-IST = Tages-SOLL':'Krankheitstag – Tages-IST = Tages-SOLL'}</p>`;return;}
+  if(!day.entries.length){c.innerHTML=`<p class="eh">Noch keine Einträge.</p>`;return;}
+  day.entries.forEach((e,i)=>{const row=document.createElement('div');row.className='egrid';row.innerHTML=`<div class="ef"><label>Start</label><input type="time" value="${e.start||''}" oninput="upEnt(${i},'start',this.value)"></div><div class="ef"><label>Pause (HH:MM)</label><input type="text" value="${e.pause||''}" placeholder="00:00" maxlength="5" oninput="upEnt(${i},'pause',this.value)"></div><div class="ef"><label>Ende</label><input type="time" value="${e.end||''}" oninput="upEnt(${i},'end',this.value)"></div><button class="edel" onclick="delEnt(${i})">✕</button>`;c.appendChild(row);});
+}
+function addEnt(){if(!S.days[vDay])S.days[vDay]={entries:[],urlaub:false,krank:false};S.days[vDay].entries.push({start:'',pause:'',end:''});save();rEntries(S.days[vDay],false,null);updSB();}
+function delEnt(i){if(!S.days[vDay])return;S.days[vDay].entries.splice(i,1);save();rDay();updSB();}
+function upEnt(i,f,v){if(!S.days[vDay])S.days[vDay]={entries:[],urlaub:false,krank:false};if(S.days[vDay].entries[i])S.days[vDay].entries[i][f]=v;save();const soll=isWD(vDay)?daySoll():0,ist=dayIst(vDay),ot=dayOT(vDay);document.getElementById('d-soll').textContent=fmM(soll);document.getElementById('d-ist').textContent=fmM(ist);const el=document.getElementById('d-ot');el.textContent=fmM(ot);el.className='svl '+otCls(ot);updSB();}
+function togDay(t){if(!S.days[vDay])S.days[vDay]={entries:[],urlaub:false,krank:false};const d=S.days[vDay];if(t==='v'){d.urlaub=!d.urlaub;if(d.urlaub)d.krank=false;}else{d.krank=!d.krank;if(d.krank)d.urlaub=false;}save();rDay();updSB();}
+
+function navWk(d){vWS=addD(vWS,d*7);rWeek();}
+function rWeek(){
+  const we=addD(vWS,6),k=kw(vWS),today=tStr();
+  document.getElementById('wk-disp').textContent=`KW ${k}  ·  ${p2(vWS.getDate())}.${p2(vWS.getMonth()+1)}–${p2(we.getDate())}.${p2(we.getMonth()+1)}.${we.getFullYear()}`;
+  const c=document.getElementById('wk-days');c.innerHTML='';let wS=0,wI=0,wOt=0;
+  for(let i=0;i<7;i++){
+    const dt=addD(vWS,i),s=dStr(dt),day=getDay(s),wd=isWD(s),hol=isHol(s);
+    const soll=wd?daySoll():0,ist=dayIst(s),ot=dayOT(s);
+    const hasData=day.entries.length||day.urlaub||day.krank;
+    if(wd)wS+=soll;if(hasData||(hol&&wd)){wI+=ist;wOt+=ot;}
+    const isT=s===today;
+    let bdg='';
+    if(hol)bdg+=`<span class="bdg bf">${hol}</span>`;
+    else if(day.urlaub)bdg+=`<span class="bdg bv">Urlaub</span>`;
+    else if(day.krank)bdg+=`<span class="bdg bk">Krank</span>`;
+    else if(!wd)bdg+=`<span class="bdg bfr">Frei</span>`;
+    const showStats=hasData||(hol&&wd);
+    const card=document.createElement('div');card.className='wdc';
+    card.innerHTML=`<div class="wdh${isT?' tday':''}" onclick="togWD('wb${i}')"><div><div class="wdn">${DOW_LNG[dt.getDay()]}${bdg}</div><div class="wdd">${fDE(s)}${isT?' · Heute':''}</div></div><div class="wdr">${showStats?`<div class="wst"><div class="wsl">IST</div><div class="wsv">${fmM(ist)}</div></div><div class="wst"><div class="wsl">Über-/Unterstd.</div><div class="wsv ${otCls(ot)}">${fmM(ot)}</div></div>`:`<span style="font-size:11px;color:var(--tx2)">–</span>`}<span style="font-size:10px;color:var(--tx2);margin-left:4px">▾</span></div></div><div class="wdb cls" id="wb${i}"><div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;font-size:12px"><span>SOLL: <b>${fmM(soll)}</b></span><span>IST: <b>${fmM(ist)}</b></span><span>Überst.: <b class="${otCls(ot)}">${fmM(ot)}</b></span></div>${wdContent(day,hol)}<button class="btn bs bsm" onclick="goDay('${s}')">Bearbeiten</button></div>`;
+    c.appendChild(card);
+    if(isT)setTimeout(()=>document.getElementById(`wb${i}`)?.classList.remove('cls'),50);
+  }
+  document.getElementById('wt-soll').textContent=fmM(wS);document.getElementById('wt-ist').textContent=fmM(wI);
+  const el=document.getElementById('wt-ot');el.textContent=fmM(wOt);el.className='wsv '+otCls(wOt);updSB();
+}
+function wdContent(day,hol){if(hol)return `<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Feiertag – Tages-IST = Tages-SOLL</p>`;if(day.urlaub)return `<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Urlaubstag</p>`;if(day.krank)return `<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Krankheitstag</p>`;if(!day.entries.length)return `<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Keine Einträge.</p>`;return day.entries.map((e,i)=>e.start||e.end?`<p style="font-size:12px;margin-bottom:4px">${i+1}. Start: <b>${e.start||'–'}</b> &nbsp;Pause: <b>${e.pause||'00:00'}</b> &nbsp;Ende: <b>${e.end||'–'}</b></p>`:'').join('')||`<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Einträge unvollständig.</p>`;}
+function togWD(id){document.getElementById(id)?.classList.toggle('cls');}
+function goDay(s){vDay=s;swV('day');}
+
+function navMon(d){vMon.m+=d;if(vMon.m>11){vMon.m=0;vMon.y++;}if(vMon.m<0){vMon.m=11;vMon.y--;}rMon();}
+function rMon(){
+  const{y,m}=vMon;document.getElementById('mon-disp').textContent=`${MON_DE[m]} ${y}`;
+  const days=new Date(y,m+1,0).getDate();let mS=0,mI=0,mOt=0,mV=0,mK=0,mF=0;
+  const list=document.getElementById('m-list');list.innerHTML='';
+  for(let d=1;d<=days;d++){
+    const s=`${y}-${p2(m+1)}-${p2(d)}`,day=getDay(s),wd=isWD(s),hol=isHol(s);
+    const soll=wd?daySoll():0,ist=dayIst(s),ot=dayOT(s);
+    const hasData=day.entries.length||day.urlaub||day.krank;
+    if(wd)mS+=soll;if(hasData||(hol&&wd)){mI+=ist;mOt+=ot;}
+    if(day.urlaub)mV++;if(day.krank)mK++;if(hol&&wd)mF++;
+    if(!hasData&&!wd&&!hol)continue;
+    const dt=dObj(s),otC=otCls(ot);
+    let icon='',iconCls='';
+    if(hol){icon='FT';iconCls='color:var(--ok)';}else if(day.urlaub){icon='U';iconCls='color:var(--ac)';}else if(day.krank){icon='K';iconCls='color:var(--wn)';}
+    const row=document.createElement('div');row.className='mdr';
+    row.innerHTML=`<span class="mdo">${DOW_DE[dt.getDay()]}</span><span class="mdt">${p2(d)}.${p2(m+1)}.</span><span class="mdi" style="${iconCls}">${icon}</span><span class="mdf" style="font-size:11px;color:var(--tx2)">S:${fmM(soll)}</span><span class="mdf" style="font-size:11px">I:${fmM(ist)}</span><span class="mdv ${otC}">${(hasData||hol&&wd)?fmM(ot):'–'}</span>`;
+    row.addEventListener('click',()=>goDay(s));list.appendChild(row);
+  }
+  const salH=Math.max(0,mI-mOt)/60;
+  document.getElementById('m-sal').textContent=(S.cfg.xBruttohlohn*salH).toLocaleString('de-DE',{style:'currency',currency:'EUR'});
+  document.getElementById('m-soll').textContent=fmM(mS);document.getElementById('m-ist').textContent=fmM(mI);
+  const el=document.getElementById('m-ot');el.textContent=fmM(mOt);el.className='svl '+otCls(mOt);
+  document.getElementById('m-vk').textContent=`${mV} / ${mK} / ${mF}`;updSB();
+}
+
+function rCfg(){const c=S.cfg;document.getElementById('c-wh').value=c.xWochenstunden;document.getElementById('c-tw').value=c.xTageswoche;document.getElementById('c-sd').value=c.startDate;document.getElementById('c-bl').value=c.xBruttohlohn;document.getElementById('c-ur').value=c.xUrlaub;document.getElementById('c-bld').innerHTML=blHTML(c.bundesland);}
+function savCfg(){
+  const wh=parseFloat(document.getElementById('c-wh').value),tw=parseInt(document.getElementById('c-tw').value),sd=document.getElementById('c-sd').value,bl=parseFloat(document.getElementById('c-bl').value),ur=parseInt(document.getElementById('c-ur').value),bld=document.getElementById('c-bld').value;
+  if(!wh||!tw||!sd||isNaN(bl)||isNaN(ur))return alert('Bitte alle Felder korrekt ausfüllen.');
+  S.cfg.xWochenstunden=wh;S.cfg.xTageswoche=tw;S.cfg.startDate=sd;S.cfg.xBruttohlohn=bl;S.cfg.xUrlaub=ur;S.cfg.bundesland=bld;
+  Object.keys(hCache).forEach(k=>delete hCache[k]);save();updSB();
+  const b=document.getElementById('sv-cfg'),orig=b.textContent;
+  b.textContent='Gespeichert';b.style.background='var(--ok)';setTimeout(()=>{b.textContent=orig;b.style.background='';},1500);
+}
+
+function opnPay(){document.getElementById('po-cur').textContent=fmM(netOT());document.getElementById('po-h').value=0;document.getElementById('po-m').value=0;document.getElementById('ov-pay').classList.add('open');}
+function clsPay(){document.getElementById('ov-pay').classList.remove('open');}
+function cnfPay(){const h=parseInt(document.getElementById('po-h').value)||0,m=parseInt(document.getElementById('po-m').value)||0,mins=h*60+m;if(mins<=0)return alert('Bitte eine Auszahlungsmenge eingeben.');const ot=netOT();if(ot-mins<0)return alert(`Nicht möglich: Überstunden würden unter 00:00 fallen.\nMaximal: ${fmM(Math.max(0,ot))}`);S.payouts.push({id:Date.now(),date:tStr(),mins});save();clsPay();updSB();if(vCur==='week')rWeek();else if(vCur==='day')rDay();else if(vCur==='month')rMon();}
+
+function expData(){const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`arbeitszeiten_backup_${tStr()}.json`;a.click();URL.revokeObjectURL(url);}
+function impData(input){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=(e)=>{try{const data=JSON.parse(e.target.result);if(!data.cfg)return alert('Ungültige Backup-Datei.');Object.keys(S).forEach(k=>delete S[k]);Object.assign(S,data);Object.keys(hCache).forEach(k=>delete hCache[k]);save();updSB();const v=vCur;swV('cfg');setTimeout(()=>swV(v),50);alert('Backup erfolgreich geladen.');}catch(err){alert('Fehler: '+err.message);}};reader.readAsText(file);input.value='';}
+function askRst(){document.getElementById('ov-rst').classList.add('open');}
+function clsRst(){document.getElementById('ov-rst').classList.remove('open');}
+function doRst(){try{localStorage.removeItem(LS);}catch(e){}location.reload();}
+
+(function(){
+  const prog=document.getElementById('prog');
+  for(let i=0;i<6;i++){const d=document.createElement('div');d.className='pd'+(i===0?' act':'');prog.appendChild(d);}
+  document.getElementById('s-bld').innerHTML=blHTML('BY');
+  document.getElementById('c-bld').innerHTML=blHTML('BY');
+  document.getElementById('s-sd').value=tStr();
+  if(load()&&S.cfg){document.getElementById('c-bld').innerHTML=blHTML(S.cfg.bundesland);initApp();}
+  else document.getElementById('setup').style.display='flex';
+})();
+</script>
+</body>
+</html>
