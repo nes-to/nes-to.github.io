@@ -1,4 +1,4 @@
-auf https://nes-to.github.io navigieren.
+auf https://nes-to.github.io/WRKT_v1 navigieren.
 
 App auf Android installieren
 Seite in Chrome öffnen → beim ersten Besuch erscheint automatisch ein blauer Banner in der App mit einem „Installieren"-Button. Antippen – fertig. Die App landet als eigenes Icon auf dem Homescreen, läuft ohne Browser-Leiste und funktioniert offline.
